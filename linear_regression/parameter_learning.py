@@ -33,7 +33,12 @@ def ulr_batch_gradient_descent(
                 features, labels, current_gradient, current_y_shift, learning_rate
             )
             rounds += 1
-    return current_gradient, current_y_shift, current_score, rounds
+    return {
+        "current_gradient": round(current_gradient, 2),
+        "current_y_shift": round(current_y_shift, 2),
+        "current_score": round(current_score, 4),
+        "epochs": rounds,
+    }
 
 
 def _single_gradient_descent(
