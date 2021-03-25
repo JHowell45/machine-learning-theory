@@ -21,7 +21,7 @@ def ulr_batch_gradient_descent(
     current_score = inf
     rounds = 0
     if epochs is None:
-        while previous_score <= current_score:
+        while previous_score >= current_score:
             previous_score = current_score
             current_gradient, current_y_shift, current_score = _single_gradient_descent(
                 features, labels, current_gradient, current_y_shift, learning_rate
