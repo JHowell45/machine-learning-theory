@@ -1,12 +1,14 @@
 """
 
 """
-from .models import UnivariateLinearRegressionModel
-from .cost_functions import mean_squared_error
-from numpy import arange
 from math import inf
 from typing import List, Union
+
+from numpy import arange
 from tqdm import tqdm
+
+from .cost_functions import mean_squared_error
+from .models import UnivariateLinearRegressionModel
 
 
 def ulr_batch_gradient_descent(
