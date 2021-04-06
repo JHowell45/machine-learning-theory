@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from numpy import array
+from pandas import Series
 
 
 @dataclass
@@ -13,8 +13,8 @@ class UnivariateLinearRegressionModel:
 
 @dataclass
 class MultivariateLinearRegression:
-    gradients: array = field(default_factory=array)
+    gradients: Series = field(default_factory=Series)
     y_axis_shift: float = 0
 
-    def predict(self, features: array) -> float:
-        return sum(self.gradients * features) + self.y_axis_shift
+    def predict(self, features: Series) -> float:
+        return self.gradients.dot(features) + self.y_axis_shift
