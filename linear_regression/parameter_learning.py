@@ -4,11 +4,11 @@
 from math import inf
 from typing import List, Union
 
-from numpy import arange
 from tqdm import tqdm
-
+from pandas import DataFrame
+from numpy import array
 from .cost_functions import mean_squared_error
-from .models import UnivariateLinearRegressionModel
+from .models import UnivariateLinearRegressionModel, MultivariateLinearRegression
 
 
 def ulr_batch_gradient_descent(
@@ -68,3 +68,43 @@ def _single_gradient_descent(
     y_shift -= learning_rate * y_axis_derivative
     cost_function_score = mean_squared_error(labels, predicted_labels)
     return gradient, y_shift, cost_function_score
+
+
+def mlr_batch_gradient_descent(
+    features: DataFrame, labels: array, current_gradients: array, learning_rate: float
+):
+    previous_score = inf
+    current_score = inf
+    rounds = 0
+    while previous_score >= current_score:
+        previous_score = current_score
+        current_gradients, current_score = ()
+        rounds += 1
+    return {
+        "current_gradients": array([round(x, 2) for x in current_gradients]),
+        "current_score": round(current_score, 4),
+        "epochs": rounds,
+    }
+
+
+def __single_mlr_gradient_descent(
+    features: DataFrame, labels: array, gradients: array, learning_rate: float
+):
+    m = len(features)
+    model = MultivariateLinearRegression(gradients=gradients)
+    predicted_labels = []
+    new_gradients = []
+    cost_scores = []
+    for gradient_index in range(0, m):
+        feature_row = features.transpose().iloc[gradient_index]
+        predicted_label = model.predict(feature_row)
+        predicted_labels.append(predicted_label)
+
+        values = []
+        for predicted, actual, feature in zip(predicted_labels, labels, feature_row):
+            values.append((predicted - actual) * feature)
+        gradiant_derivative = sum(values) / m
+        gradient = gradients[gradient_index] - (learning_rate * gradiant_derivative)
+        new_gradients.append(gradient)
+        cost_scores.append(mean_squared_error(labels, predicted_labels))
+    return array(new_gradients), array(cost_scores)
