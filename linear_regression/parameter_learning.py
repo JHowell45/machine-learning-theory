@@ -93,17 +93,18 @@ def __single_mlr_gradient_descent(
     m = len(features)
     model = MultivariateLinearRegression(gradients=gradients)
     predicted_labels = []
+    new_gradients = []
+    cost_scores = []
     for gradient_index in range(0, m):
-        predicted_label = model.predict(features.transpose().iloc[gradient_index])
+        feature_row = features.transpose().iloc[gradient_index]
+        predicted_label = model.predict(feature_row)
         predicted_labels.append(predicted_label)
 
         values = []
-        for predicted, actual, feature in zip(predicted_labels, labels.features):
-            values.append((predicted - actual) * feature[1])
-        gradiant_derivative = (
-            sum(
-                (predicted - actual)
-                for predicted, actual, feature in zip(predicted_labels, labels.features)
-            )
-            / m
-        )
+        for predicted, actual, feature in zip(predicted_labels, labels, feature_row):
+            values.append((predicted - actual) * feature)
+        gradiant_derivative = sum(values) / m
+        gradient = gradients[gradient_index] - (learning_rate * gradiant_derivative)
+        new_gradients.append(gradient)
+        cost_scores.append(mean_squared_error(labels, predicted_labels))
+    return array(new_gradients), array(cost_scores)
