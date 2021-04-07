@@ -8,6 +8,7 @@ numpy = "*"
 tqdm = "*"
 pandas = "*"
 sklearn = "*"
+matplotlib = "*"
 
 [dev-packages]
 black = "*"
