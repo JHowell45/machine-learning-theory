@@ -17,4 +17,4 @@ def mean_squared_error(
     distance_sum = 0
     for actual, predicted in zip(actual_labels, predicted_labels):
         distance_sum += (predicted - actual) ** 2
-    return ((1 / actual_labels_length) * distance_sum) / 2
+    return (1 / (2 * actual_labels_length)) * distance_sum
