@@ -5,40 +5,67 @@ from math import inf
 from typing import List, Union
 
 from tqdm import tqdm
-from pandas import DataFrame
-from numpy import array
 from .cost_functions import mean_squared_error
-from .models import UnivariateLinearRegressionModel, MultivariateLinearRegression
+from .models import UnivariateLinearRegressionModel
+from pandas import Series
 
 
 def ulr_batch_gradient_descent(
-    features: List[Union[float, int]],
-    labels: List[Union[float, int]],
-    current_gradient: int = 0,
-    current_y_shift: int = 0,
+    features: Union[Series, List[Union[float, int]]],
+    labels: Union[Series, List[Union[float, int]]],
+    current_theta_0: int = 0,
+    current_theta_1: int = 0,
     learning_rate: float = 0.0001,
     epochs: int = None,
 ):
-    previous_score = inf
-    current_score = inf
+    previous_mse_score = inf
+    current_mse_score = 0
     rounds = 0
+    start = True
     if epochs is None:
-        while previous_score >= current_score:
-            previous_score = current_score
-            current_gradient, current_y_shift, current_score = _single_gradient_descent(
-                features, labels, current_gradient, current_y_shift, learning_rate
+        while previous_mse_score > current_mse_score:
+            if start:
+                current_mse_score = inf
+                start = False
+            previous_mse_score = current_mse_score
+            (
+                current_theta_0,
+                current_theta_1,
+                current_mse_score,
+            ) = _single_gradient_descent(
+                features, labels, current_theta_0, current_theta_1, learning_rate
             )
             rounds += 1
+            print(
+                {
+                    "current_theta_0": round(current_theta_0, 2),
+                    "current_theta_1": round(current_theta_1, 2),
+                    "current_mse_score": round(current_mse_score, 4),
+                    "epochs": rounds,
+                }
+            )
     else:
         for _ in tqdm(range(epochs)):
-            current_gradient, current_y_shift, current_score = _single_gradient_descent(
-                features, labels, current_gradient, current_y_shift, learning_rate
-            )
-            rounds += 1
+            if previous_mse_score > current_mse_score:
+                if start:
+                    current_mse_score = inf
+                    start = False
+                previous_mse_score = current_mse_score
+
+                (
+                    current_theta_0,
+                    current_theta_1,
+                    current_mse_score,
+                ) = _single_gradient_descent(
+                    features, labels, current_theta_0, current_theta_1, learning_rate
+                )
+                rounds += 1
+            else:
+                break
     return {
-        "current_gradient": round(current_gradient, 2),
-        "current_y_shift": round(current_y_shift, 2),
-        "current_score": round(current_score, 4),
+        "current_theta_0": round(current_theta_0, 2),
+        "current_theta_1": round(current_theta_1, 2),
+        "current_mse_score": round(current_mse_score, 4),
         "epochs": rounds,
     }
 
@@ -46,65 +73,28 @@ def ulr_batch_gradient_descent(
 def _single_gradient_descent(
     features: List[Union[float, int]],
     labels: List[Union[float, int]],
-    gradient: float,
-    y_shift: float,
+    current_theta_0: float,
+    current_theta_1: float,
     learning_rate: float,
 ):
     m = len(features)
-    model = UnivariateLinearRegressionModel(gradient, y_shift)
+    model = UnivariateLinearRegressionModel(current_theta_0, current_theta_1)
+    # predicted_labels = model.multiple_predictions(features)  # somehow slower??
     predicted_labels = [model.predict(feature) for feature in features]
-    gradiant_derivative = (
+
+    theta_0_derivative = (
         sum((predicted - actual) for predicted, actual in zip(predicted_labels, labels))
         / m
     )
-    y_axis_derivative = (
+    theta_1_derivative = (
         sum(
             (predicted - actual) * feature
             for predicted, actual, feature in zip(predicted_labels, labels, features)
         )
         / m
     )
-    gradient -= learning_rate * gradiant_derivative
-    y_shift -= learning_rate * y_axis_derivative
+
+    current_theta_0 -= learning_rate * theta_0_derivative
+    current_theta_1 -= learning_rate * theta_1_derivative
     cost_function_score = mean_squared_error(labels, predicted_labels)
-    return gradient, y_shift, cost_function_score
-
-
-def mlr_batch_gradient_descent(
-    features: DataFrame, labels: array, current_gradients: array, learning_rate: float
-):
-    previous_score = inf
-    current_score = inf
-    rounds = 0
-    while previous_score >= current_score:
-        previous_score = current_score
-        current_gradients, current_score = ()
-        rounds += 1
-    return {
-        "current_gradients": array([round(x, 2) for x in current_gradients]),
-        "current_score": round(current_score, 4),
-        "epochs": rounds,
-    }
-
-
-def __single_mlr_gradient_descent(
-    features: DataFrame, labels: array, gradients: array, learning_rate: float
-):
-    m = len(features)
-    model = MultivariateLinearRegression(gradients=gradients)
-    predicted_labels = []
-    new_gradients = []
-    cost_scores = []
-    for gradient_index in range(0, m):
-        feature_row = features.transpose().iloc[gradient_index]
-        predicted_label = model.predict(feature_row)
-        predicted_labels.append(predicted_label)
-
-        values = []
-        for predicted, actual, feature in zip(predicted_labels, labels, feature_row):
-            values.append((predicted - actual) * feature)
-        gradiant_derivative = sum(values) / m
-        gradient = gradients[gradient_index] - (learning_rate * gradiant_derivative)
-        new_gradients.append(gradient)
-        cost_scores.append(mean_squared_error(labels, predicted_labels))
-    return array(new_gradients), array(cost_scores)
+    return current_theta_0, current_theta_1, cost_function_score

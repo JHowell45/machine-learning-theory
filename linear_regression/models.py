@@ -5,11 +5,11 @@ from typing import List, Union
 
 @dataclass
 class UnivariateLinearRegressionModel:
-    gradient: float
-    y_axis_shift: float = 0
+    theta_0: float
+    theta_1: float
 
     def predict(self, feature: float) -> float:
-        return (self.gradient * feature) + self.y_axis_shift
+        return (self.theta_1 * feature) + self.theta_0
 
     def multiple_predictions(self, features: Union[Series, List[float]]) -> Series:
         """Use this function to quickly predict the values for multiple features.
@@ -25,7 +25,7 @@ class UnivariateLinearRegressionModel:
         features_dataframe = DataFrame(
             [Series(1 for _ in range(len(features))), features]
         ).transpose()
-        params = Series([self.y_axis_shift, self.gradient])
+        params = Series([self.theta_0, self.theta_1])
         return features_dataframe.dot(params)
 
 
