@@ -11,7 +11,9 @@ from random import randrange
 from pandas import Series
 
 
-def univariate_linear_regression_example(feature_size: int = 100, epochs: int = None):
+def univariate_linear_regression_example(
+    feature_size: int = 100, epochs: int = None, learning_rate: int = 0.001
+):
     print("\nRunning Univariate Linear Regression Example:\n\n")
     features = Series(feature for feature in range(feature_size))
     labels = Series(feature * 2 for feature in features)
@@ -26,7 +28,7 @@ def univariate_linear_regression_example(feature_size: int = 100, epochs: int = 
 
     s = time()
     best_parameters = batch_gradient_descent(
-        features=features, labels=labels, epochs=epochs
+        features=features, labels=labels, epochs=epochs, learning_rate=learning_rate
     )
     print(f"Gradient Descent Runtime: {round(time() - s, 2)}s")
     print(f"Best Parameters: {best_parameters}")
