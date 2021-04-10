@@ -8,10 +8,13 @@ class UnivariateLinearRegressionModel:
     theta_0: float
     theta_1: float
 
+    def __post_init__(self):
+        self.params = Series([self.theta_0, self.theta_1])
+
     def predict(self, feature: float) -> float:
         return (self.theta_1 * feature) + self.theta_0
 
-    def multiple_predictions(self, features: Union[Series, List[float]]) -> Series:
+    def multiple_predictions(self, features: Series) -> Series:
         """Use this function to quickly predict the values for multiple features.
 
         This function is used for running the linear regression to get the
@@ -20,13 +23,10 @@ class UnivariateLinearRegressionModel:
         :param features: the vector of feature values.
         :return: the vector of feature predictions.
         """
-        if isinstance(features, list):
-            features = Series(features)
         features_dataframe = DataFrame(
             [Series(1 for _ in range(len(features))), features]
         ).transpose()
-        params = Series([self.theta_0, self.theta_1])
-        return features_dataframe.dot(params)
+        return features_dataframe.dot(self.params)
 
 
 @dataclass
