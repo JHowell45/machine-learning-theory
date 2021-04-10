@@ -5,12 +5,12 @@ from math import inf
 from typing import List, Union
 
 from tqdm import tqdm
-from .cost_functions import mean_squared_error
-from .models import UnivariateLinearRegressionModel
+from linear_regression.cost_functions import mean_squared_error
+from linear_regression.models import UnivariateLinearRegressionModel
 from pandas import Series
 
 
-def ulr_batch_gradient_descent(
+def batch_gradient_descent(
     features: Union[Series, List[Union[float, int]]],
     labels: Union[Series, List[Union[float, int]]],
     current_theta_0: int = 0,
@@ -32,7 +32,7 @@ def ulr_batch_gradient_descent(
                 current_theta_0,
                 current_theta_1,
                 current_mse_score,
-            ) = _single_gradient_descent(
+            ) = single_gradient_descent(
                 features, labels, current_theta_0, current_theta_1, learning_rate
             )
             rounds += 1
@@ -56,7 +56,7 @@ def ulr_batch_gradient_descent(
                     current_theta_0,
                     current_theta_1,
                     current_mse_score,
-                ) = _single_gradient_descent(
+                ) = single_gradient_descent(
                     features, labels, current_theta_0, current_theta_1, learning_rate
                 )
                 rounds += 1
@@ -70,9 +70,9 @@ def ulr_batch_gradient_descent(
     }
 
 
-def _single_gradient_descent(
-    features: List[Union[float, int]],
-    labels: List[Union[float, int]],
+def single_gradient_descent(
+    features: Series,
+    labels: Series,
     current_theta_0: float,
     current_theta_1: float,
     learning_rate: float,
@@ -80,21 +80,28 @@ def _single_gradient_descent(
     m = len(features)
     model = UnivariateLinearRegressionModel(current_theta_0, current_theta_1)
     # predicted_labels = model.multiple_predictions(features)  # somehow slower??
-    predicted_labels = [model.predict(feature) for feature in features]
+    predicted_labels = Series(model.predict(feature) for feature in features)
 
-    theta_0_derivative = (
-        sum((predicted - actual) for predicted, actual in zip(predicted_labels, labels))
-        / m
+    theta_0_derivative = theta_0_partial_derivative(
+        predictions=predicted_labels, actual_labels=labels, m=m
     )
-    theta_1_derivative = (
-        sum(
-            (predicted - actual) * feature
-            for predicted, actual, feature in zip(predicted_labels, labels, features)
-        )
-        / m
+    theta_1_derivative = theta_1_partial_derivative(
+        predictions=predicted_labels, actual_labels=labels, features=features, m=m
     )
 
     current_theta_0 -= learning_rate * theta_0_derivative
     current_theta_1 -= learning_rate * theta_1_derivative
     cost_function_score = mean_squared_error(labels, predicted_labels)
     return current_theta_0, current_theta_1, cost_function_score
+
+
+def theta_0_partial_derivative(
+    predictions: Series, actual_labels: Series, m: int
+) -> float:
+    return (1 / m) * sum(predictions - actual_labels)
+
+
+def theta_1_partial_derivative(
+    predictions: Series, actual_labels: Series, features: Series, m: int
+) -> float:
+    return (1 / m) * sum((predictions - actual_labels) * features)
