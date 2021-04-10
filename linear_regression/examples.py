@@ -11,7 +11,37 @@ from random import randrange
 from pandas import Series
 
 
-def univariate_linear_regression_example(feature_size: int = 100):
+def univariate_linear_regression_example(
+    feature_size: int = 100, learning_rate: int = 0.001
+):
+    print("\nRunning Univariate Linear Regression Example:\n\n")
+    features = Series(feature for feature in range(feature_size))
+    labels = Series(feature * 2 for feature in features)
+    print(f"Features shape: {features.shape}")
+    print(f"Labels shape: {labels.shape}")
+
+    plt.clf()
+    plt.plot(features, labels, "bo")
+    plt.xlabel("features")
+    plt.ylabel("labels")
+    plt.savefig(f"./graphs/linear_regression/univariate_example/artificial_data.png")
+
+    s = time()
+    best_parameters = ulr_batch_gradient_descent(
+        features=features, labels=labels, learning_rate=learning_rate
+    )
+    print(f"Gradient Descent Runtime: {round(time() - s, 2)}s")
+    print(f"Best Parameters: {best_parameters}")
+    print(f"Best MSE Score: {best_parameters['current_mse_score']}")
+    best_model = UnivariateLinearRegressionModel(
+        theta_0=best_parameters["current_theta_0"],
+        theta_1=best_parameters["current_theta_1"],
+    )
+    print()
+    return best_model
+
+
+def univariate_linear_regression_example_2(feature_size: int = 100):
     print("\nRunning Univariate Linear Regression Example:\n\n")
     features = Series(randrange(0, feature_size * 2) for _ in range(feature_size))
     labels = Series(4 + 3 * feature + randrange(0, 10) for feature in features)
@@ -22,7 +52,7 @@ def univariate_linear_regression_example(feature_size: int = 100):
     plt.plot(features, labels, "bo")
     plt.xlabel("features")
     plt.ylabel("labels")
-    plt.savefig(f"./graphs/linear_regression/univariate_example/artificial_data.png")
+    plt.savefig(f"./graphs/linear_regression/univariate_example/artificial_data_2.png")
 
     s = time()
     best_parameters = ulr_batch_gradient_descent(
@@ -39,7 +69,7 @@ def univariate_linear_regression_example(feature_size: int = 100):
     return best_model
 
 
-def univariate_linear_regression_example_2():
+def univariate_linear_regression_example_3():
     print("\nRunning Univariate Linear Regression Example 2:\n\n")
     features, labels = load_boston(return_X_y=True)
     print("Loading example Boston data from SKLearn:\n")
