@@ -3,7 +3,7 @@
 """
 from sklearn.datasets import load_boston
 from linear_regression.models import UnivariateLinearRegressionModel
-from linear_regression.parameter_learning import ulr_batch_gradient_descent
+from linear_regression.parameter_learning.univariate import batch_gradient_descent
 from math import inf
 from matplotlib import pyplot as plt
 from time import time
@@ -11,9 +11,7 @@ from random import randrange
 from pandas import Series
 
 
-def univariate_linear_regression_example(
-    feature_size: int = 100, learning_rate: int = 0.001
-):
+def univariate_linear_regression_example(feature_size: int = 100, epochs: int = None):
     print("\nRunning Univariate Linear Regression Example:\n\n")
     features = Series(feature for feature in range(feature_size))
     labels = Series(feature * 2 for feature in features)
@@ -27,8 +25,8 @@ def univariate_linear_regression_example(
     plt.savefig(f"./graphs/linear_regression/univariate_example/artificial_data.png")
 
     s = time()
-    best_parameters = ulr_batch_gradient_descent(
-        features=features, labels=labels, learning_rate=learning_rate
+    best_parameters = batch_gradient_descent(
+        features=features, labels=labels, epochs=epochs
     )
     print(f"Gradient Descent Runtime: {round(time() - s, 2)}s")
     print(f"Best Parameters: {best_parameters}")
@@ -55,7 +53,7 @@ def univariate_linear_regression_example_2(feature_size: int = 100):
     plt.savefig(f"./graphs/linear_regression/univariate_example/artificial_data_2.png")
 
     s = time()
-    best_parameters = ulr_batch_gradient_descent(
+    best_parameters = batch_gradient_descent(
         features=features, labels=labels, epochs=100000
     )
     print(f"Gradient Descent Runtime: {round(time() - s, 2)}s")
@@ -102,9 +100,7 @@ def univariate_linear_regression_example_3():
         plt.ylabel(name)
         plt.savefig(f"./graphs/linear_regression/univariate_example/{name}.png")
 
-        best_parameters = ulr_batch_gradient_descent(
-            features=feature_set, labels=labels
-        )
+        best_parameters = batch_gradient_descent(features=feature_set, labels=labels)
         print(f"Best Parameters: {best_parameters}")
         if best_parameters["current_mse_score"] < best_mse_score:
             best_mse_score = best_parameters["current_mse_score"]
