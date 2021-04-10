@@ -1,12 +1,10 @@
 """
 
 """
-from typing import List, Union
+from pandas import Series
 
 
-def mean_squared_error(
-    actual_labels: List[Union[int, float]], predicted_labels: List[Union[int, float]]
-) -> float:
+def mean_squared_error(actual_labels: Series, predicted_labels: Series) -> float:
     actual_labels_length = len(actual_labels)
     predicted_labels_length = len(predicted_labels)
     if actual_labels_length != predicted_labels_length:
@@ -14,7 +12,8 @@ def mean_squared_error(
             f"Different lengths for actual labels ({actual_labels_length}) and "
             f"predicted labels ({predicted_labels_length})"
         )
-    distance_sum = 0
-    for actual, predicted in zip(actual_labels, predicted_labels):
-        distance_sum += (predicted - actual) ** 2
+    # distance_sum = 0
+    # for actual, predicted in zip(actual_labels, predicted_labels):
+    #     distance_sum += (predicted - actual) ** 2
+    distance_sum = (predicted_labels - actual_labels) ** 2
     return (1 / (2 * actual_labels_length)) * distance_sum
