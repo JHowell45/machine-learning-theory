@@ -12,5 +12,5 @@ def mean_squared_error(actual_labels: Series, predicted_labels: Series) -> float
             f"Different lengths for actual labels ({actual_labels_length}) and "
             f"predicted labels ({predicted_labels_length})"
         )
-    distance_sum = sum((predicted_labels - actual_labels) ** 2)
+    distance_sum = sum(predicted_labels.subtract(actual_labels).pow(2))
     return (1 / (2 * actual_labels_length)) * distance_sum
