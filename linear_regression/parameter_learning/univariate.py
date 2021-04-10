@@ -98,10 +98,10 @@ def single_gradient_descent(
 def theta_0_partial_derivative(
     predictions: Series, actual_labels: Series, m: int
 ) -> float:
-    return (1 / m) * sum(predictions - actual_labels)
+    return (1 / m) * sum(predictions.subtract(actual_labels))
 
 
 def theta_1_partial_derivative(
     predictions: Series, actual_labels: Series, features: Series, m: int
 ) -> float:
-    return (1 / m) * sum((predictions - actual_labels) * features)
+    return (1 / m) * sum(predictions.subtract(actual_labels).multiply(features))
