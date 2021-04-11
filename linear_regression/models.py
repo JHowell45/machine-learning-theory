@@ -31,8 +31,12 @@ class UnivariateLinearRegressionModel:
 
 @dataclass
 class MultivariateLinearRegression:
+    theta_0: float
     gradients: Series = field(default_factory=Series)
-    y_axis_shift: float = 0
+
+    @property
+    def params(self):
+        return Series([self.theta_0]).append(self.gradients, ignore_index=True)
 
     def predict(self, features: Series) -> float:
-        return self.gradients.dot(features) + self.y_axis_shift
+        return self.gradients.dot(features) + self.theta_0
