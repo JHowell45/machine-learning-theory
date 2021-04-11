@@ -41,7 +41,9 @@ def univariate_linear_regression_example(
     return best_model
 
 
-def univariate_linear_regression_example_2(feature_size: int = 100):
+def univariate_linear_regression_example_2(
+    feature_size: int = 100, epochs: int = None, learning_rate: int = 0.001
+):
     print("\nRunning Univariate Linear Regression Example:\n\n")
     features = Series(randrange(0, feature_size * 2) for _ in range(feature_size))
     labels = Series(4 + 3 * feature + randrange(0, 10) for feature in features)
@@ -56,7 +58,7 @@ def univariate_linear_regression_example_2(feature_size: int = 100):
 
     s = time()
     best_parameters = batch_gradient_descent(
-        features=features, labels=labels, epochs=100000
+        features=features, labels=labels, epochs=epochs, learning_rate=learning_rate
     )
     print(f"Gradient Descent Runtime: {round(time() - s, 2)}s")
     print(f"Best Parameters: {best_parameters}")
