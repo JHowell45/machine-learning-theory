@@ -11,8 +11,8 @@ from pandas import Series
 
 
 def batch_gradient_descent(
-    features: Union[Series, List[Union[float, int]]],
-    labels: Union[Series, List[Union[float, int]]],
+    features: Series,
+    labels: Series,
     current_theta_0: int = 0,
     current_theta_1: int = 0,
     learning_rate: float = 0.0001,
