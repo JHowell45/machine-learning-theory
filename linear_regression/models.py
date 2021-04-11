@@ -39,4 +39,17 @@ class MultivariateLinearRegression:
         return Series([self.theta_0]).append(self.gradients, ignore_index=True)
 
     def predict(self, features: Series) -> float:
-        return self.gradients.dot(features) + self.theta_0
+        if len(self.gradients) != len(features):
+            raise ValueError(
+                f"Features not the same length as gradients! Features: "
+                f"{len(features)}, Gradients: {len(self.gradients)}"
+            )
+        return self.gradients.multiply(features).sum() + self.theta_0
+
+    def multiple_predictions(self, features: DataFrame) -> Series:
+        rows, columns = features.shape
+        if len(self.gradients) != columns:
+            raise ValueError(
+                f"Features not the same length as gradients! Features: {columns}, Gradients: {len(self.gradients)}"
+            )
+        return features.mul(self.gradients).sum(1).add(self.theta_0)
