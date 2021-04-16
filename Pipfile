@@ -13,6 +13,7 @@ matplotlib = "*"
 [dev-packages]
 black = "*"
 ptpython = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
