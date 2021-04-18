@@ -2,12 +2,14 @@
 
 """
 from math import inf
-from .univariate import theta_0_partial_derivative
 
+from pandas import DataFrame, Series
 from tqdm import tqdm
+
 from linear_regression.cost_functions import mean_squared_error
 from linear_regression.models import MultivariateLinearRegression
-from pandas import DataFrame, Series
+
+from .univariate import theta_0_partial_derivative
 
 
 def batch_gradient_descent(
@@ -68,33 +70,3 @@ def batch_gradient_descent(
         "current_mse_score": round(current_mse_score, 4),
         "epochs": rounds,
     }
-
-
-def single_gradient_descent(
-    features: DataFrame,
-    labels: DataFrame,
-    current_theta_0: float,
-    current_theta_i: Series,
-    learning_rate: float,
-):
-    m = len(features)
-    model = MultivariateLinearRegression(current_theta_0, current_theta_i)
-    predicted_labels = model.predict(features)  # somehow slower??
-
-    theta_0_derivative = theta_0_partial_derivative(
-        predictions=predicted_labels, actual_labels=labels, m=m
-    )
-    gradient_derivatives = theta_i_partial_derivative()
-
-    current_theta_0 -= learning_rate * theta_0_derivative
-    current_theta_1 -= gradient_derivatives.multiply(learning_rate)
-    cost_function_score = mean_squared_error(labels, predicted_labels)
-    return current_theta_0, current_theta_1, cost_function_score
-
-
-def theta_i_partial_derivative(
-    predictions: DataFrame, actual_labels: DataFrame, features: DataFrame, m: int
-) -> Series:
-    return (1 / m) * predictions.subtract(actual_labels).transpose().dot(features).sum(
-        1
-    )

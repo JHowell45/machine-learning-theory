@@ -2,12 +2,12 @@
 
 """
 from math import inf
-from typing import List, Union
 
-from tqdm import tqdm
-from linear_regression.cost_functions import mean_squared_error
-from linear_regression.models import UnivariateLinearRegressionModel
 from pandas import Series
+from tqdm import tqdm
+
+from src.linear_regression.cost_functions import mean_squared_error
+from src.linear_regression.models import UnivariateLinearRegressionModel
 
 
 def batch_gradient_descent(
