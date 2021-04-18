@@ -7,10 +7,10 @@ from pandas import Series
 from tqdm import tqdm
 
 from src.linear_regression.cost_functions import mean_squared_error
-from src.linear_regression.models import UnivariateLinearRegressionModel
 
 
 def batch_gradient_descent(
+    univariate_linear_regression_model,
     features: Series,
     labels: Series,
     current_theta_0: int = 0,
@@ -33,7 +33,12 @@ def batch_gradient_descent(
                 current_theta_1,
                 current_mse_score,
             ) = single_gradient_descent(
-                features, labels, current_theta_0, current_theta_1, learning_rate
+                univariate_linear_regression_model,
+                features,
+                labels,
+                current_theta_0,
+                current_theta_1,
+                learning_rate,
             )
             rounds += 1
             print(
@@ -57,7 +62,12 @@ def batch_gradient_descent(
                     current_theta_1,
                     current_mse_score,
                 ) = single_gradient_descent(
-                    features, labels, current_theta_0, current_theta_1, learning_rate
+                    univariate_linear_regression_model,
+                    features,
+                    labels,
+                    current_theta_0,
+                    current_theta_1,
+                    learning_rate,
                 )
                 rounds += 1
             else:
@@ -71,6 +81,7 @@ def batch_gradient_descent(
 
 
 def single_gradient_descent(
+    univariate_linear_regression_model,
     features: Series,
     labels: Series,
     current_theta_0: float,
@@ -78,7 +89,7 @@ def single_gradient_descent(
     learning_rate: float,
 ):
     m = len(features)
-    model = UnivariateLinearRegressionModel(current_theta_0, current_theta_1)
+    model = univariate_linear_regression_model(current_theta_0, current_theta_1)
     # predicted_labels = model.multiple_predictions(features)  # somehow slower??
     predicted_labels = Series(model.predict(feature) for feature in features)
 
