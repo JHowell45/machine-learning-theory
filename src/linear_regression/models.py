@@ -17,8 +17,7 @@ class UnivariateLinearRegressionModel:
     def multiple_predictions(self, features: Series) -> Series:
         """Use this function to quickly predict the values for multiple features.
 
-        This function is used for running the linear regression to get the
-        predictions for several features at once.
+        This function is used for running the linear regression to get the predictions for several features at once.
 
         :param features: the vector of feature values.
         :return: the vector of feature predictions.

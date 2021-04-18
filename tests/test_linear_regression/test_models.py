@@ -3,7 +3,12 @@
 """
 import pytest
 
-from src.linear_regression.models import UnivariateLinearRegressionModel
+from pandas import Series
+
+from src.linear_regression.models import (
+    MultivariateLinearRegression,
+    UnivariateLinearRegressionModel,
+)
 
 
 class TestUnivariateLinearRegressionModel:
@@ -21,5 +26,21 @@ class TestUnivariateLinearRegressionModel:
     def test_prediction(self, theta_0, theta_1, feature, prediction):
         assert (
             UnivariateLinearRegressionModel(theta_0, theta_1).predict(feature)
+            == prediction
+        )
+
+
+class TestMultivariateLinearRegression:
+    @pytest.mark.parametrize(
+        "theta_0, gradients,features,prediction",
+        [
+            [0, Series([2, 2]), Series([4, 8]), 24],
+            [5, Series([2, 2]), Series([4, 8]), 29],
+            [0, Series([2, -5]), Series([4, 8]), -32],
+        ],
+    )
+    def test_predictions(self, theta_0, gradients, features, prediction):
+        assert (
+            MultivariateLinearRegression(theta_0, gradients).predict(features)
             == prediction
         )
