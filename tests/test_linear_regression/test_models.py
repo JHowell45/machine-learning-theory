@@ -12,7 +12,6 @@ class TestUnivariateLinearRegressionModel:
         [
             [0, 2, 2, 4],
             [2, 2, 2, 6],
-            [2, 5, 2, 12],
             [0, -5, 2, -10],
             [7, -5, 2, -3],
             [17, -5, 2, 7],
