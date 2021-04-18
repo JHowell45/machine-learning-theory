@@ -1,8 +1,9 @@
 """
 
 """
-from src.linear_regression.models import UnivariateLinearRegressionModel
 import pytest
+
+from src.linear_regression.models import UnivariateLinearRegressionModel
 
 
 @pytest.fixture(scope="session")

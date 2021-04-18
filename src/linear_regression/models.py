@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
-from pandas import Series, DataFrame
-from typing import List, Union
+
+from pandas import DataFrame, Series
 
 
 @dataclass

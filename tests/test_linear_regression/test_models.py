@@ -2,6 +2,7 @@
 
 """
 import pytest
+
 from src.linear_regression.models import UnivariateLinearRegressionModel
 
 
